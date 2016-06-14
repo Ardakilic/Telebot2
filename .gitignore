@@ -1,0 +1,23 @@
+# PHP
+vendor/
+node_modules/
+
+# Laravel 5 & Lumen specific
+bootstrap/cache/
+.env.*.php
+.env.php
+.env
+storage/logs/
+
+# Rocketeer PHP task runner and deployment package. https://github.com/rocketeers/rocketeer
+.rocketeer/
+
+# JetBrains
+.idea
+
+# OS X
+**/.DS_Store
+
+# Don't track any 3rd party possible plugins, except the sample one
+telebot/plugins/*
+!telebot/plugins/ExamplePlugin.php
