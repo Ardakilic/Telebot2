@@ -26,7 +26,7 @@ class Telebot
     public function __construct($botWithResponses, $requestData, $storagePath)
     {
         if (!is_array($botWithResponses)) {
-            die('Telebot class initialization parameter should be an array');
+            throw new \Exception('Telebot class initialization parameter should be an array');
         }
         $this->botWithResponses = $botWithResponses;
         $this->requestData = $requestData;
