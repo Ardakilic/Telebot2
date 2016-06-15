@@ -128,7 +128,10 @@ class Telebot
                     }
 
                 } else {
-                    return false;
+                    array_push($queryArray, [
+                        'name' => 'text',
+                        'contents' => $this->defaultResponse,
+                    ]);
                 }
             }
         }
