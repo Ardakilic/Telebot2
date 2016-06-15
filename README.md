@@ -127,6 +127,7 @@ Notes
 TODOs
 ---------
 * Inline Bots support
+* Cache
 * More plugins
 * ?
 
@@ -138,6 +139,9 @@ Contributing
 
 Changelog
 ---------
+#### 0.3.0 - release 2016-06-15
+* Fix to not to send the default response to invalid commands.
+
 #### 0.2.0 - release 2016-06-15
 * You can now set the default response for the bot if there's no matching results.
 

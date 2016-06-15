@@ -2,7 +2,7 @@
 
 /**
  * Telebot2
- * https://github.com/Ardakilic/Telebot2
+ * https://github.com/Ardakilic/Telebot2.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -115,17 +115,28 @@ class Telebot
 
             //If all fails, let's set the fallback message for text
             if (!$response) {
-                array_push($queryArray, [
-                    'name' => 'text',
-                    'contents' => $this->defaultResponse,
-                ]);
+
+                if ($this->getCommandName() !== null) {
+
+                    if ($this->hasMatchingCommand()) {
+                        array_push($queryArray, [
+                            'name' => 'text',
+                            'contents' => $this->defaultResponse,
+                        ]);
+                    } else {
+                        return false;
+                    }
+
+                } else {
+                    return false;
+                }
             }
         }
 
         $queryArray = array_merge($queryArray, $this->setParams($response));
 
         return [
-            'type' => $response ? $response['response_type'] : 'text',
+            'type' => (isset($response) && $response) ? $response['response_type'] : 'text',
             'data' => $queryArray,
         ];
     }
@@ -216,7 +227,7 @@ class Telebot
                 'contents' => (string)$this->requestData['message']['message_id'],
             ]);
         }
-        if ($response['preview_links_if_any'] == 'y') {
+        if ($response['preview_links_if_any'] == 'n') {
             array_push($out, [
                 'name' => 'disable_web_page_preview',
                 'contents' => 'true',
@@ -279,7 +290,7 @@ class Telebot
      */
     private function isCommand()
     {
-        return $this->requestData['message']['entities'][0]['type'] == 'bot_command';
+        return isset($this->requestData['message']['entities']) && $this->requestData['message']['entities'][0]['type'] == 'bot_command';
     }
 
     /**
@@ -300,6 +311,8 @@ class Telebot
 
     /**
      * This method checks whether the bot can send a response.
+     * The response should have text, it shouldn't be a new chat participant information,
+     * and if it's a command, it should be a matching command for the bot responses.
      *
      * @return bool
      */
@@ -308,5 +321,29 @@ class Telebot
         return isset($this->requestData['message']['text'])
         && !isset($this->requestData['message']['new_chat_member'])
         && !isset($this->requestData['message']['new_chat_participant']);
+    }
+
+    /**
+     * This method checks whether the bot has responses with given command parameter
+     *
+     * @return bool
+     */
+    private function hasMatchingCommand()
+    {
+        if ($this->getCommandName() === null) {
+            return false;
+        } else {
+            $commandName = $this->getCommandName();
+            $matchingResponses = array_filter($this->botWithResponses['responses'], function ($value) use ($commandName) {
+                return $value['command'] == $commandName;
+            });
+
+            //If no response is found, return false
+            if (count($matchingResponses) === 0) {
+                return false;
+            } else {
+                return true;
+            }
+        }
     }
 }

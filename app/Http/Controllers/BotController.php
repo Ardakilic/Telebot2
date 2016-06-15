@@ -2,7 +2,7 @@
 
 /**
  * Telebot2
- * https://github.com/Ardakilic/Telebot2
+ * https://github.com/Ardakilic/Telebot2.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -56,6 +56,10 @@ class BotController extends Controller
 
         //Let's take the response from Telebot Class
         $botResponse = $telebot->setResponse();
+
+        if(!$botResponse) {
+            return 'OK';
+        }
 
         //Now let's send!
         $client = new Guzzle();
