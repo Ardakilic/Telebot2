@@ -138,6 +138,9 @@ Contributing
 
 Changelog
 ---------
+#### 0.2.0 - release 2016-06-15
+* You can now set the default response for the bot if there's no matching results.
+
 #### 0.1.0 - release 2016-06-15
 * Initial Release.
 

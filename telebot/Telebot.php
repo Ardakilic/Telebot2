@@ -20,18 +20,20 @@ class Telebot
     private $botWithResponses,
         $requestData,
         $defaultResponse,
+        $config,
         $storagePath,
         $externalEndpoint;
 
-    public function __construct($botWithResponses, $requestData, $storagePath)
+    public function __construct($botWithResponses, $requestData, $config)
     {
         if (!is_array($botWithResponses)) {
             throw new \Exception('Telebot class initialization parameter should be an array');
         }
         $this->botWithResponses = $botWithResponses;
         $this->requestData = $requestData;
-        $this->storagePath = $storagePath;
-        $this->defaultResponse = 'Sorry, could you please repeat that?';
+        $this->config = $config;
+        $this->storagePath = $config['storage_path'];
+        $this->defaultResponse = !is_null($config['default_response']) ? $config['default_response'] : 'Sorry, could you please repeat that?';
         //This variable will be filled when external plugin sets it
         $this->externalEndpoint = null;
     }
@@ -292,7 +294,7 @@ class Telebot
 
             return trim(substr($message, 1, strpos($message, ' ')));
         } else {
-            return;
+            return null;
         }
     }
 

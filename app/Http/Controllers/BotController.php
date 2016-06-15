@@ -43,7 +43,10 @@ class BotController extends Controller
         }
 
         //Initialize the Telegram Bot class witg Bot's data and Telegram's request
-        $telebot = new Telebot($bot, $request->all(), storage_path());
+        $telebot = new Telebot($bot, $request->all(), [
+            'storage_path' => storage_path(),
+            'default_response' => env('DEFAULT_RESPONSE', 'Sorry, could you please repeat that?'),
+        ]);
 
         //There are the non-response events such as a user signs into the group etc.
         //We should return something for the bot else it may keep pinging the server
