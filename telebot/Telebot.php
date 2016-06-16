@@ -278,9 +278,9 @@ class Telebot
         $matchingResponses = array_filter($this->botWithResponses['responses'], function ($value) use ($pattern, $command) {
             //User can also send messages such as "/command@nameOfTheBot response"
             if ($command !== null && strlen($command)) {
-                return preg_match('/' . addslashes($pattern) . '/i', $value['pattern']) && $value['command'] == $command;
+                return preg_match('/' . preg_quote($pattern) . '/i', $value['pattern']) && $value['command'] == $command;
             } else {
-                return preg_match('/' . addslashes($pattern) . '/i', $value['pattern']);
+                return preg_match('/' . preg_quote($pattern) . '/i', $value['pattern']);
             }
         });
 
