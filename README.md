@@ -139,8 +139,10 @@ Contributing
 
 Changelog
 ---------
-#### 0.3.0 - release 2016-06-15
+#### 0.2.1 - release 2016-06-16
 * Fix to not to send the default response to invalid commands.
+* Non-valid commands are not returning response from now on.
+* The bot can now also response to messages such as `/command@nameOfTheBot message`.
 
 #### 0.2.0 - release 2016-06-15
 * You can now set the default response for the bot if there's no matching results.

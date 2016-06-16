@@ -33,7 +33,10 @@ class Telebot
         $this->requestData = $requestData;
         $this->config = $config;
         $this->storagePath = $config['storage_path'];
-        $this->defaultResponse = !is_null($config['default_response']) ? $config['default_response'] : 'Sorry, could you please repeat that?';
+        $this->defaultResponse = 'Sorry, could you please repeat that?';
+        if (isset($config['default_response']) && $config['default_response'] !== null) {
+            $this->defaultResponse = $config['default_response'];
+        }
         //This variable will be filled when external plugin sets it
         $this->externalEndpoint = null;
     }
@@ -73,7 +76,7 @@ class Telebot
                 return 'sendVoice';
                 break;
             case 'external':
-                return !is_null($this->externalEndpoint) ? $this->externalEndpoint : 'sendMessage';
+                return ($this->externalEndpoint !== null) ? $this->externalEndpoint : 'sendMessage';
                 break;
             default:
                 return 'sendMessage';
@@ -249,9 +252,11 @@ class Telebot
     {
         $message = $this->requestData['message']['text'];
         if ($this->isCommand()) {
+            // "/command@nameOfTheBot command" is also a valid command
+            $message = str_replace('/' . $this->getCommandName() . '@' . $this->botWithResponses['name'], '', $message);
             return trim(substr($message, strpos($message, ' ') + 1));
         } else {
-            return trim(str_replace('@' . $this->botWithResponses->name, '', $message));
+            return trim(str_replace('@' . $this->botWithResponses['name'], '', $message));
         }
     }
 
@@ -266,12 +271,16 @@ class Telebot
      */
     private function bringMatchingResponse($pattern, $command = null)
     {
+        if ($command !== null) {
+            $botName = $this->botWithResponses['name'];
+            $command = str_replace('@' . $botName, '', $command);
+        }
         $matchingResponses = array_filter($this->botWithResponses['responses'], function ($value) use ($pattern, $command) {
-
-            if (!is_null($command) && strlen($command)) {
-                return preg_match('/' . $pattern . '/i', $value['pattern']) && $value['command'] == $command;
+            //User can also send messages such as "/command@nameOfTheBot response"
+            if ($command !== null && strlen($command)) {
+                return preg_match('/' . addslashes($pattern) . '/i', $value['pattern']) && $value['command'] == $command;
             } else {
-                return preg_match('/' . $pattern . '/i', $value['pattern']);
+                return preg_match('/' . addslashes($pattern) . '/i', $value['pattern']);
             }
         });
 
@@ -280,7 +289,7 @@ class Telebot
             return false;
         }
 
-        //Else, shuffle the array and return the first occurence
+        //Else, shuffle the array and return the first occurrence
         shuffle($matchingResponses);
 
         return reset($matchingResponses);
@@ -337,16 +346,18 @@ class Telebot
             return false;
         } else {
             $commandName = $this->getCommandName();
-            $matchingResponses = array_filter($this->botWithResponses['responses'], function ($value) use ($commandName) {
+            //User can also send messages such as "/command@nameOfTheBot response"
+            $commandName = str_replace('@' . $this->botWithResponses['name'], '', $commandName);
+            $botName = $this->botWithResponses['name'];
+            $matchingResponses = array_filter($this->botWithResponses['responses'], function ($value) use ($commandName, $botName) {
                 return $value['command'] == $commandName;
             });
 
             //If no response is found, return false
             if (count($matchingResponses) === 0) {
                 return false;
-            } else {
-                return true;
             }
+            return true;
         }
     }
 }
