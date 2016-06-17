@@ -343,8 +343,7 @@ class Telebot
             $commandName = $this->getCommandName();
             //User can also send messages such as "/command@nameOfTheBot response"
             $commandName = str_replace('@' . $this->botWithResponses['name'], '', $commandName);
-            $botName = $this->botWithResponses['name'];
-            $matchingResponses = array_filter($this->botWithResponses['responses'], function ($value) use ($commandName, $botName) {
+            $matchingResponses = array_filter($this->botWithResponses['responses'], function ($value) use ($commandName) {
                 return $value['command'] == $commandName;
             });
 

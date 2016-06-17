@@ -127,7 +127,7 @@ Notes
 TODOs
 ---------
 * Inline Bots support
-* Cache
+* Caching
 * More plugins
 * ?
 
@@ -139,6 +139,9 @@ Contributing
 
 Changelog
 ---------
+#### 0.2.2 - release 2016-06-17
+* Proper response handling
+
 #### 0.2.1 - release 2016-06-16
 * Fix to not to send the default response to invalid commands.
 * Non-valid commands are not returning response from now on.
