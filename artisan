@@ -32,4 +32,9 @@ $kernel = $app->make(
     'Illuminate\Contracts\Console\Kernel'
 );
 
+//Lumen Tinker
+if(class_exists('Vluzrmos\Tinker\TinkerServiceProvider')) {
+    $app->register('Vluzrmos\Tinker\TinkerServiceProvider');
+}
+
 exit($kernel->handle(new ArgvInput, new ConsoleOutput));
