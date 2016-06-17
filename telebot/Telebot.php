@@ -277,22 +277,17 @@ class Telebot
         }
         $matchingResponses = array_filter($this->botWithResponses['responses'], function ($value) use ($pattern, $command) {
             //User can also send messages such as "/command@nameOfTheBot response"
-            if ($command !== null && strlen($command)) {
-                return preg_match('/' . preg_quote($pattern) . '/i', $value['pattern']) && $value['command'] == $command;
-            } else {
-                return preg_match('/' . preg_quote($pattern) . '/i', $value['pattern']);
+            if ($command !== null && $value['command'] != $command) {
+                return false;
             }
+
+            return (preg_match('/' . preg_quote($value['pattern'], '/') . '/i', $pattern) === 1);
         });
 
-        //If no response is found, return false
-        if (count($matchingResponses) === 0) {
-            return false;
-        }
+        //Pick a random element from array
+        $random = array_rand($matchingResponses);
 
-        //Else, shuffle the array and return the first occurrence
-        shuffle($matchingResponses);
-
-        return reset($matchingResponses);
+        return $matchingResponses[$random];
     }
 
     /**
