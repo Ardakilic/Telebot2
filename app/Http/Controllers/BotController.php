@@ -32,6 +32,13 @@ class BotController extends Controller
         $this->bot = $bot;
     }
 
+    /**
+     * The response method for the bots
+     *
+     * @param $id
+     * @param Request $request
+     * @return string
+     */
     public function response($id, Request $request)
     {
         $id = intval($id);
@@ -46,6 +53,8 @@ class BotController extends Controller
         $telebot = new Telebot($bot, $request->all(), [
             'storage_path' => storage_path(),
             'default_response' => env('DEFAULT_RESPONSE', 'Sorry, could you please repeat that?'),
+            'global_config' => config()->all(),
+            'global_env' => $_ENV,
         ]);
 
         //There are the non-response events such as a user signs into the group etc.
@@ -57,7 +66,7 @@ class BotController extends Controller
         //Let's take the response from Telebot Class
         $botResponse = $telebot->setResponse();
 
-        if(!$botResponse) {
+        if (!$botResponse) {
             return 'OK';
         }
 

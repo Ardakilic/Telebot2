@@ -16,10 +16,11 @@
 namespace Telebot\Plugins;
 
 use Faker;
+use GuzzleHttp\Client;
 
-class ExamplePlugin
+class CurrentWeatherPlugin
 {
-    private $responseData, //The response row from SQL 
+    private $responseData, //The response row from SQL
         $request, //Bot's request data as array
         $config, //The whole config, along with plugin specific configuration
         $rawInput; //User's input
@@ -41,12 +42,12 @@ class ExamplePlugin
      */
     public function setResponse()
     {
-        $faker = Faker\Factory::create();
 
-        //For what to return, you can refer to Telebot.php or Telegram API
+        $weatherData = json_decode($this->getWeatherInfoFromAPI(), true);
+        //http://openweathermap.org/weather-conditions
         return [
             'name' => 'text',
-            'contents' => 'Hello human, ' . $faker->text,
+            'contents' => 'Ahoy, The weather at ' . $weatherData['name'] . ' is ' . $weatherData['main']['temp'] . '°C. It\'s ' . $weatherData['weather'][0]['main'] . ' (' . $weatherData['weather'][0]['description'] . ') Minimum is ' . $weatherData['main']['temp_min'] . '°C, maximum is ' . $weatherData['main']['temp_max'] . '°C.',
         ];
     }
 
@@ -59,5 +60,25 @@ class ExamplePlugin
     public function setEndpoint()
     {
         return 'sendMessage';
+    }
+
+    /**
+     * The API response from OpenWeatherMap
+     * @return string
+     */
+    private function getWeatherInfoFromAPI()
+    {
+        $client = new Client();
+        $response = $client->get('http://api.openweathermap.org/data/2.5/weather?q=' . $this->stripCityFromInput() . '&appid=' . $this->config['global_env']['PLUGIN_OPENWEATHERMAP_API_KEY'] . '&units=metric');
+        return $response->getBody()->getContents();
+    }
+
+    /**
+     * The request string holds both parameter and city name, so we split the parameter from user's input
+     * @return string
+     */
+    private function stripCityFromInput()
+    {
+        return trim(str_replace($this->responseData['pattern'], '', $this->rawInput));
     }
 }

@@ -21,3 +21,4 @@ storage/logs/
 # Don't track any 3rd party possible plugins, except the sample one
 telebot/plugins/*
 !telebot/plugins/ExamplePlugin.php
+!telebot/plugins/CurrentWeatherPlugin.php

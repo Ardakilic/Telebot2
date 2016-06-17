@@ -21,6 +21,8 @@ class Telebot
         $requestData,
         $defaultResponse,
         $config,
+        $globalConfig,
+        $globalEnv,
         $storagePath,
         $externalEndpoint;
 
@@ -32,6 +34,8 @@ class Telebot
         $this->botWithResponses = $botWithResponses;
         $this->requestData = $requestData;
         $this->config = $config;
+        $this->globalConfig = $config['global_config'];
+        $this->globalEnv = $config['global_env'];
         $this->storagePath = $config['storage_path'];
         $this->defaultResponse = 'Sorry, could you please repeat that?';
         if (isset($config['default_response']) && $config['default_response'] !== null) {
@@ -215,7 +219,7 @@ class Telebot
             case 'external':
                 //TODO, maybe some service provider support like Laravel-specific plugins?
                 $externalPlugin = '\\' . $response['plugin_namespace'] . '\\' . $response['response_data'];
-                $plugin = new $externalPlugin($response, $this->requestData);
+                $plugin = new $externalPlugin($response, $this->requestData, $this->config, $this->stripOnlyText());
                 //Set the endpoint for getEndpoint() method
                 $this->externalEndpoint = $plugin->setEndpoint();
                 array_push($out, $plugin->setResponse());
