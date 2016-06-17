@@ -18,9 +18,9 @@ Features
 
 Screenshots
 ---------
-![ss1](https://i.imgur.com/BsbdkiC.png)
+![ss1](https://i.imgur.com/97mJqRs.png)
 
-![ss2](https://i.imgur.com/ahbE5nJ.png)
+![ss2](https://i.imgur.com/JnUgdfO.png)
 
 
 Requirements
@@ -63,7 +63,7 @@ use Faker;
 
 class ExamplePlugin
 {
-    private $responseData, //The response row from SQL 
+    private $responseData, //The response row from SQL
         $request; //Bot's request data as array
 
     public function __construct($responseData, $request)
@@ -112,6 +112,10 @@ The above codes will produce a response such as this:
 
 ![Plugin](https://i.imgur.com/leYr7e0.png)
 
+There is also another plugin called `CurrentWeatherPlugin` in the same folder. It connects to openweathermap.org plugin with a provided dummy app key (you can set it in your `.env` file at `PLUGIN_OPENWEATHERMAP_API_KEY`) and get a response such as this:
+
+![weather](https://i.imgur.com/tjzCnn3.png)
+
 As you can see, the namespace is defined at it's row. You can copy and paste your plugin into `telebot/plugins` directory (it won't be tracked), or call it as a requirement from composer and just set the class name and namespace.
 
 
@@ -139,8 +143,12 @@ Contributing
 
 Changelog
 ---------
+#### 0.3.0 - release 2016-06-17
+* Plugins can can now import user input, the config and environment variables.
+* Example Weather bot added ( `telebot/Plugins/CurrentWeatherPlugin.php` ), which is powered by [OpenWeatherMap](http://openweathermap.org/) (you must set your free api key).
+
 #### 0.2.2 - release 2016-06-17
-* Proper response handling
+* Proper response handling.
 
 #### 0.2.1 - release 2016-06-16
 * Fix to not to send the default response to invalid commands.

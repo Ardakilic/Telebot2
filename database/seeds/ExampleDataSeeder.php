@@ -61,7 +61,7 @@ class ExampleDataSeeder extends Seeder
                 'command' => 'location', // /location istanbul
                 'pattern' => 'istanbul',
                 'response_type' => 'location', //'text', 'image', 'sticker', 'video', 'audio', 'document', 'location', 'voice', 'external'
-                'response_data' => '41.015137|28.979530', //Splitted by | character
+                'response_data' => '41.015137|28.979530', //Split by | character
                 'plugin_namespace' => null, //see below for details
                 'as_quote' => 'n', //can be y or n
                 'preview_links_if_any' => 'n', //If the "response_data" contains url, will they be previewed in chat?
@@ -100,6 +100,19 @@ class ExampleDataSeeder extends Seeder
                 'response_data' => 'ExamlePlugin',
                 'plugin_namespace' => 'Telebot\Plugins', //These two lines will call \Telebot\Plugins\ExamplePlugin Class
                 'as_quote' => 'y', //can be y or n
+                'preview_links_if_any' => 'n', //If the "response_data" contains url, will they be previewed in chat?
+                'created_at' => $theDate,
+                'updated_at' => $theDate,
+            ],
+            [
+                //This makes you enable to use command such as "/weather bring new york"
+                'bot_id' => $bot->id,
+                'command' => 'weather',
+                'pattern' => 'bring',
+                'response_type' => 'external', //'text', 'image', 'sticker', 'video', 'audio', 'document', 'location', 'voice', 'external'
+                'response_data' => 'CurrentWeatherPlugin',
+                'plugin_namespace' => 'Telebot\Plugins', //These two lines will call \Telebot\Plugins\ExamplePlugin Class
+                'as_quote' => 'n', //can be y or n
                 'preview_links_if_any' => 'n', //If the "response_data" contains url, will they be previewed in chat?
                 'created_at' => $theDate,
                 'updated_at' => $theDate,

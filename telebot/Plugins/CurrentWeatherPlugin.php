@@ -45,10 +45,18 @@ class CurrentWeatherPlugin
 
         $weatherData = json_decode($this->getWeatherInfoFromAPI(), true);
         //http://openweathermap.org/weather-conditions
+        if (!isset($weatherData['main']['temp'])) {
+            return [
+                'name' => 'text',
+                'contents' => 'No weather data found',
+            ];
+        }
+
         return [
             'name' => 'text',
             'contents' => 'Ahoy, The weather at ' . $weatherData['name'] . ' is ' . $weatherData['main']['temp'] . '°C. It\'s ' . $weatherData['weather'][0]['main'] . ' (' . $weatherData['weather'][0]['description'] . ') Minimum is ' . $weatherData['main']['temp_min'] . '°C, maximum is ' . $weatherData['main']['temp_max'] . '°C.',
         ];
+
     }
 
 
