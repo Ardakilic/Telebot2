@@ -63,15 +63,26 @@ use Faker;
 
 class ExamplePlugin
 {
-    private $responseData, //The response row from SQL
-        $request; //Bot's request data as array
+    private $responseData, //The response row from SQL 
+        $request, //Bot's request data as array
+        $config, //The whole config, along with plugin specific configuration
+        $rawInput; //User's input
+    // $config['global_config'] returns the Lumen configuration array
+    // $config['global_env'] returns the environment variables
 
-    public function __construct($responseData, $request)
+    public function __construct($responseData, $request, $config, $rawInput)
     {
         $this->responseData = $responseData;
         $this->request = $request;
+        $this->config = $config;
+        $this->rawInput = $rawInput;
     }
 
+    /**
+     * The response data for Telegram API
+     *
+     * @return array
+     */
     public function setResponse()
     {
         $faker = Faker\Factory::create();
@@ -83,7 +94,12 @@ class ExamplePlugin
         ];
     }
 
-    //The endpoint of Telegram, this defines how the message will be sent
+
+    /**
+     * The endpoint of Telegram, this defines how the message will be sent
+     *
+     * @return string
+     */
     public function setEndpoint()
     {
         return 'sendMessage';
