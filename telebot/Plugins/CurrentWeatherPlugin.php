@@ -15,7 +15,6 @@
 
 namespace Telebot\Plugins;
 
-use Faker;
 use GuzzleHttp\Client;
 
 class CurrentWeatherPlugin

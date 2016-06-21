@@ -59,6 +59,8 @@ class Telebot
                 return 'sendMessage';
                 break;
             case 'image':
+            case 'image_data':
+            case 'image_external':
                 return 'sendPhoto';
                 break;
             case 'sticker':
@@ -184,6 +186,18 @@ class Telebot
                     ]
                 );
                 break;
+            case 'image_external':
+            case 'image_data':
+                // You can both upload or provide external http URL to Telegram with same parameters
+                // It'll take care of the rest
+                // https://core.telegram.org/bots/api#sendphoto
+                array_push($out,
+                    [
+                        'name' => 'photo',
+                        'contents' => $response['response_data'],
+                    ]
+                );
+                break;
             case 'sticker':
                 array_push($out, [
                     'name' => 'sticker',
@@ -285,8 +299,16 @@ class Telebot
                 return false;
             }
 
-            return (preg_match('/' . preg_quote($value['pattern'], '/') . '/i', $pattern) === 1);
+            if (!strlen(trim($value['pattern'])) || $value['pattern'] === null) {
+                return true;
+            }
+
+            return strlen($pattern) ? (preg_match('/' . preg_quote($value['pattern'], '/') . '/i', $pattern) === 1) : false;
         });
+
+        if (count($matchingResponses) === 0) {
+            return false;
+        }
 
         //Pick a random element from array
         $random = array_rand($matchingResponses);

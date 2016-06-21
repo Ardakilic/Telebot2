@@ -22,3 +22,4 @@ storage/logs/
 telebot/plugins/*
 !telebot/plugins/ExamplePlugin.php
 !telebot/plugins/CurrentWeatherPlugin.php
+!telebot/plugins/GoogleTTSPlugin.php
