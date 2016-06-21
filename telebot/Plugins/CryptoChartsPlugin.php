@@ -54,12 +54,12 @@ class CryptoChartsPlugin
         if (!$this->canRespond) {
             return [
                 'name' => 'text',
-                'contents' => 'Wrong input. Structure: /command [currency] [compare] [timespan] [theme] Example: /chart2 ppc , /chart2 ppc usd , /chart2 ppc usdt 1w candlestick. Refer to https://cryptohistory.org/ for details',
+                'contents' => 'Wrong input. Structure: /command [currency] [compare] [timespan] [theme] Example: /chart ppc , /chart ppc usd , /chart2 ppc usdt 7d candlestick. Refer to https://cryptohistory.org/ for details',
             ];
         }
 
         return [
-            'name' => 'image_data',
+            'name' => 'photo',
             'contents' => $this->chartData,
         ];
     }
@@ -87,27 +87,18 @@ class CryptoChartsPlugin
      */
     private function prepareAndCheckRespond()
     {
-        $offsetOfFirstSpace = strpos($this->rawInput, ' ');
-        if ($offsetOfFirstSpace === false) {
-            return false;
-        }
-
-        $input = substr($this->rawInput, $offsetOfFirstSpace + 1);
-        if (strlen($input) === 0) {
-            return false;
-        }
 
         $parameters = [
             'currency' => 'eth', //can be ltc, ppc, nmc, etc. etc.
-            'compare' => 'usdt', //can be btc or usdt
-            'timespan' => '1d', //can be 1d, 4d, 1w, 1m , 2y etc.
+            'compare' => 'btc', //can be btc or usdt
+            'timespan' => '24h', //can be 1y, 30d, 7d, or 24h
             'theme' => 'candlestick', //can be candlestick, dark, light, sparkling
         ];
 
         // raw input is like: /command currency compare timespan theme
         // $input variable is "currency compare timespan theme" or whatever available.
 
-        $inputParams = array_map('trim', explode(' ', $input));
+        $inputParams = array_map('trim', explode(' ', $this->rawInput));
 
         // Now let's set parameters
         // 1st one is always here, check done above:
@@ -131,16 +122,12 @@ class CryptoChartsPlugin
 
         // Source code of charts, in case it goes down: https://github.com/seigler/neat-charts
         // Or my fork: https://github.com/Ardakilic/neat-charts just in case
-        /* $chartData = @fopen('https://cryptohistory.org/charts/' . $parameters['theme'] . '/' . $parameters['currency'] . '-' . $parameters['compare'] . '/' . $parameters['timespan'] . '/png', 'rb');
+
+        $chartData = fopen('https://cryptohistory.org/charts/' . $parameters['theme'] . '/' . $parameters['currency'] . '-' . $parameters['compare'] . '/' . $parameters['timespan'] . '/png', 'rb');
         if (!$chartData) {
-             return false;
+            return false;
         }
-
-        $this->chartData = $chartData;*/
-        //No need to upload photo for external images, just HTTP link would suffice, Telegram takes care of the rest:
-        // https://core.telegram.org/bots/api#sendphoto
-
-        $this->chartData = 'https://cryptohistory.org/charts/' . $parameters['theme'] . '/' . $parameters['currency'] . '-' . $parameters['compare'] . '/' . $parameters['timespan'] . '/png';
+        $this->chartData = $chartData;
         $this->canRespond = true;
 
         return true;

@@ -187,10 +187,18 @@ class Telebot
                 );
                 break;
             case 'image_external':
+                array_push($out,
+                    [
+                        'name' => 'photo',
+                        'contents' => fopen($response['response_data'], 'rb'),
+                    ],
+                    [
+                        'name' => 'caption',
+                        'contents' => $response['response_data'],
+                    ]
+                );
+                break;
             case 'image_data':
-                // You can both upload or provide external http URL to Telegram with same parameters
-                // It'll take care of the rest
-                // https://core.telegram.org/bots/api#sendphoto
                 array_push($out,
                     [
                         'name' => 'photo',

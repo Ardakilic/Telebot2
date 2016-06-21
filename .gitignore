@@ -24,3 +24,4 @@ telebot/plugins/*
 !telebot/plugins/CurrentWeatherPlugin.php
 !telebot/plugins/GoogleTTSPlugin.php
 !telebot/plugins/CryptoChartsPlugin.php
+composer.lock
