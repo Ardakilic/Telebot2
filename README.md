@@ -159,6 +159,11 @@ Contributing
 
 Changelog
 ---------
+#### 0.3.1 - release 2016-06-17
+* Parameters are non mandatory for responses and plugins: Some plugins may directly need parameters for specific commands, such as `/command parameter` where the parameter may directly be a specific `response`'s parameter. But make sure you don't have a command pattern matching `parameter` for this case, else they are also being returned. This way, you can use `/command parameter` directly from now on.
+* Another example plugin, "Google TTS Plugin". This plugin returns the user's text as response speech.
+* Better response handling. If results were expected and no result was returned, the script would throw an exception.
+
 #### 0.3.0 - release 2016-06-17
 * Plugins can can now import user input, the config and environment variables.
 * Example Weather bot added ( `telebot/Plugins/CurrentWeatherPlugin.php` ), which is powered by [OpenWeatherMap](http://openweathermap.org/) (you must set your free api key).

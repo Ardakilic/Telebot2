@@ -285,8 +285,16 @@ class Telebot
                 return false;
             }
 
-            return (preg_match('/' . preg_quote($value['pattern'], '/') . '/i', $pattern) === 1);
+            if (!strlen(trim($value['pattern'])) || $value['pattern'] === null) {
+                return true;
+            }
+
+            return strlen($pattern) ? (preg_match('/' . preg_quote($value['pattern'], '/') . '/i', $pattern) === 1) : false;
         });
+
+        if (count($matchingResponses) === 0) {
+            return false;
+        }
 
         //Pick a random element from array
         $random = array_rand($matchingResponses);
