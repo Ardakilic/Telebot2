@@ -19,10 +19,10 @@ use GuzzleHttp\Client;
 
 class CurrentWeatherPlugin
 {
-    private $responseData, //The response row from SQL
-        $request, //Bot's request data as array
-        $config, //The whole config, along with plugin specific configuration
-        $rawInput; //User's input
+    private $responseData;
+    private $request;
+    private $config;
+    private $rawInput; //User's input
     // $config['global_config'] returns the Lumen configuration array
     // $config['global_env'] returns the environment variables
 
@@ -41,7 +41,6 @@ class CurrentWeatherPlugin
      */
     public function setResponse()
     {
-
         $weatherData = json_decode($this->getWeatherInfoFromAPI(), true);
         //http://openweathermap.org/weather-conditions
         if (!isset($weatherData['main']['temp'])) {
@@ -55,7 +54,6 @@ class CurrentWeatherPlugin
             'name' => 'text',
             'contents' => 'Ahoy, The weather at ' . $weatherData['name'] . ' is ' . $weatherData['main']['temp'] . '°C. It\'s ' . $weatherData['weather'][0]['main'] . ' (' . $weatherData['weather'][0]['description'] . ') Minimum is ' . $weatherData['main']['temp_min'] . '°C, maximum is ' . $weatherData['main']['temp_max'] . '°C.',
         ];
-
     }
 
 

@@ -1,5 +1,8 @@
 # PHP
 vendor/
+composer.lock
+
+# Node
 node_modules/
 
 # Laravel 5 & Lumen specific
@@ -24,4 +27,3 @@ telebot/plugins/*
 !telebot/plugins/CurrentWeatherPlugin.php
 !telebot/plugins/GoogleTTSPlugin.php
 !telebot/plugins/CryptoChartsPlugin.php
-composer.lock

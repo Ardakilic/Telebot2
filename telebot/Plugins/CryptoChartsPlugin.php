@@ -17,15 +17,16 @@ namespace Telebot\Plugins;
 
 class CryptoChartsPlugin
 {
-    private $responseData, //The response row from SQL
-        $request, //Bot's request data as array
-        $config, //The whole config, along with plugin specific configuration
-        $rawInput; //User's input
+    private $responseData;
+    private $request;
+    private $config;
+    private $rawInput; //User's input
     // $config['global_config'] returns the Lumen configuration array
     // $config['global_env'] returns the environment variables
 
     // Bot-specific
-    private $chartData, $canRespond;
+    private $chartData;
+    private $canRespond;
 
     public function __construct($responseData, $request, $config, $rawInput)
     {
@@ -50,7 +51,6 @@ class CryptoChartsPlugin
      */
     public function setResponse()
     {
-
         if (!$this->canRespond) {
             return [
                 'name' => 'text',
@@ -87,7 +87,6 @@ class CryptoChartsPlugin
      */
     private function prepareAndCheckRespond()
     {
-
         $parameters = [
             'currency' => 'eth', //can be ltc, ppc, nmc, etc. etc.
             'compare' => 'btc', //can be btc or usdt
@@ -123,7 +122,33 @@ class CryptoChartsPlugin
         // Source code of charts, in case it goes down: https://github.com/seigler/neat-charts
         // Or my fork: https://github.com/Ardakilic/neat-charts just in case
 
-        $chartData = fopen('https://cryptohistory.org/charts/' . $parameters['theme'] . '/' . $parameters['currency'] . '-' . $parameters['compare'] . '/' . $parameters['timespan'] . '/png', 'rb');
+        $imageURL = 'https://cryptohistory.org/charts/' . $parameters['theme'] . '/' . $parameters['currency'] . '-' . $parameters['compare'] . '/' . $parameters['timespan'] . '/png';
+
+        // Let's add a background, because Telegram makes transparent backgrounds as black
+        $savePath = storage_path() . '/telebot/photo/temp.png';
+        $colorRgb = array('red' => 255, 'green' => 255, 'blue' => 255); //background to be filled
+
+        $img = @imagecreatefrompng($imageURL);
+        if (!$img) {
+            return false;
+        }
+        // We need width and height to create the new png
+        $width = imagesx($img);
+        $height = imagesy($img);
+
+        // The new image with background color
+        $backgroundImg = @imagecreatetruecolor($width, $height);
+        $color = imagecolorallocate($backgroundImg, $colorRgb['red'], $colorRgb['green'], $colorRgb['blue']);
+        imagefill($backgroundImg, 0, 0, $color);
+        // copy original image to background
+        imagecopy($backgroundImg, $img, 0, 0, 0, 0, $width, $height);
+        // save as png
+        imagepng($backgroundImg, $savePath, 0);
+
+        // Now let's prepare for upload Telegram.
+
+        // Double check just in case
+        $chartData = @fopen($savePath, 'rb');
         if (!$chartData) {
             return false;
         }
@@ -132,6 +157,4 @@ class CryptoChartsPlugin
 
         return true;
     }
-
-
 }

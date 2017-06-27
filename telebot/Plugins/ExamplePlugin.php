@@ -19,10 +19,10 @@ use Faker;
 
 class ExamplePlugin
 {
-    private $responseData, //The response row from SQL 
-        $request, //Bot's request data as array
-        $config, //The whole config, along with plugin specific configuration
-        $rawInput; //User's input
+    private $responseData;
+    private $request;
+    private $config;
+    private $rawInput; //User's input
     // $config['global_config'] returns the Lumen configuration array
     // $config['global_env'] returns the environment variables
 

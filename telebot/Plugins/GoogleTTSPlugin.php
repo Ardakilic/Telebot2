@@ -17,15 +17,18 @@ namespace Telebot\Plugins;
 
 class GoogleTTSPlugin
 {
-    private $responseData, //The response row from SQL
-        $request, //Bot's request data as array
-        $config, //The whole config, along with plugin specific configuration
-        $rawInput; //User's input
+    private $responseData;
+    private $request;
+    private $config;
+    private $rawInput; //User's input
     // $config['global_config'] returns the Lumen configuration array
     // $config['global_env'] returns the environment variables
 
     // Bot-specific
-    private $language, $userInput, $ttsAudio, $canRespond;
+    private $language;
+    private $userInput;
+    private $ttsAudio;
+    private $canRespond;
 
     public function __construct($responseData, $request, $config, $rawInput)
     {
@@ -51,7 +54,6 @@ class GoogleTTSPlugin
      */
     public function setResponse()
     {
-
         if (!$this->canRespond) {
             return [
                 'name' => 'text',
@@ -111,6 +113,4 @@ class GoogleTTSPlugin
 
         return true;
     }
-
-
 }

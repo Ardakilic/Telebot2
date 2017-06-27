@@ -17,14 +17,14 @@ namespace Telebot;
 
 class Telebot
 {
-    private $botWithResponses,
-        $requestData,
-        $defaultResponse,
-        $config,
-        $globalConfig,
-        $globalEnv,
-        $storagePath,
-        $externalEndpoint;
+    private $botWithResponses;
+    private $requestData;
+    private $defaultResponse;
+    private $config;
+    private $globalConfig;
+    private $globalEnv;
+    private $storagePath;
+    private $externalEndpoint;
 
     public function __construct($botWithResponses, $requestData, $config)
     {
@@ -124,9 +124,7 @@ class Telebot
 
             //If all fails, let's set the fallback message for text
             if (!$response) {
-
                 if ($this->getCommandName() !== null) {
-
                     if ($this->hasMatchingCommand()) {
                         array_push($queryArray, [
                             'name' => 'text',
@@ -135,7 +133,6 @@ class Telebot
                     } else {
                         return false;
                     }
-
                 } else {
                     array_push($queryArray, [
                         'name' => 'text',
