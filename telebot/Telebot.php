@@ -25,6 +25,7 @@ class Telebot
     private $globalEnv;
     private $storagePath;
     private $externalEndpoint;
+    private $canSendMessage;
 
     public function __construct($botWithResponses, $requestData, $config)
     {
@@ -43,6 +44,8 @@ class Telebot
         }
         //This variable will be filled when external plugin sets it
         $this->externalEndpoint = null;
+        //Default is null, will be bool after checks or overrides
+        $this->canSendMessage = null;
     }
 
     /**
@@ -93,7 +96,7 @@ class Telebot
     /**
      * This method returns the data to be sent back to the Telegram bot.
      *
-     * @return array
+     * @return array|bool
      */
     public function setResponse()
     {
@@ -142,7 +145,13 @@ class Telebot
             }
         }
 
-        $queryArray = array_merge($queryArray, $this->setParams($response));
+        $botParameters = $this->setParams($response);
+        $queryArray = array_merge($queryArray, $botParameters);
+
+        // setParams makes a double check, because external plugins can refuse to respond
+        if (!$this->canSendMessage() || !$botParameters) {
+            return false;
+        }
 
         return [
             'type' => (isset($response) && $response) ? $response['response_type'] : 'text',
@@ -155,7 +164,7 @@ class Telebot
      *
      * @param $response array the fetched data from SQL
      *
-     * @return array the array of data
+     * @return array|bool the array of data
      */
     private function setParams($response)
     {
@@ -241,7 +250,12 @@ class Telebot
                 $plugin = new $externalPlugin($response, $this->requestData, $this->config, $this->stripOnlyText());
                 //Set the endpoint for getEndpoint() method
                 $this->externalEndpoint = $plugin->setEndpoint();
-                array_push($out, $plugin->setResponse());
+                $responseOfExternalPlugin = $plugin->setResponse();
+                if ($responseOfExternalPlugin === false) {
+                    $this->canSendMessage = false;
+                    return false;
+                }
+                array_push($out, $responseOfExternalPlugin);
                 break;
             default:
                 array_push($out, [
@@ -349,6 +363,7 @@ class Telebot
 
     /**
      * This method checks whether the bot can send a response.
+     * A variable can override this
      * The response should have text, it shouldn't be a new chat participant information,
      * and if it's a command, it should be a matching command for the bot responses.
      *
@@ -356,9 +371,13 @@ class Telebot
      */
     public function canSendMessage()
     {
-        return isset($this->requestData['message']['text'])
-        && !isset($this->requestData['message']['new_chat_member'])
-        && !isset($this->requestData['message']['new_chat_participant']);
+        if ($this->canSendMessage === null) {
+            $this->canSendMessage = isset($this->requestData['message']['text'])
+                && !isset($this->requestData['message']['new_chat_member'])
+                && !isset($this->requestData['message']['new_chat_participant']);
+        }
+
+        return $this->canSendMessage;
     }
 
     /**

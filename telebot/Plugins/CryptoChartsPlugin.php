@@ -47,10 +47,14 @@ class CryptoChartsPlugin
     /**
      * The response data for Telegram API
      *
-     * @return array
+     * @return array|bool The response data
      */
     public function setResponse()
     {
+        if (!$this->isCommand()) {
+            return false;
+        }
+
         if (!$this->canRespond) {
             return [
                 'name' => 'text',
@@ -68,7 +72,7 @@ class CryptoChartsPlugin
     /**
      * The endpoint of Telegram, this defines how the message will be sent
      *
-     * @return string
+     * @return string the endpoint path of the Telegram API
      */
     public function setEndpoint()
     {
@@ -81,7 +85,8 @@ class CryptoChartsPlugin
 
     /**
      * Checks the user input that whether the bot can respond
-     * Also, this method sets the parameters for Google TTS engine
+     * Also, this method sets the parameters for the Chart
+     * and prepares the image
      *
      * @return bool
      */
@@ -122,6 +127,7 @@ class CryptoChartsPlugin
         // Source code of charts, in case it goes down: https://github.com/seigler/neat-charts
         // Or my fork: https://github.com/Ardakilic/neat-charts just in case
 
+        //TODO: get svg and use imagick instead of GD
         $imageURL = 'https://cryptohistory.org/charts/' . $parameters['theme'] . '/' . $parameters['currency'] . '-' . $parameters['compare'] . '/' . $parameters['timespan'] . '/png';
 
         // Let's add a background, because Telegram makes transparent backgrounds as black
@@ -156,5 +162,15 @@ class CryptoChartsPlugin
         $this->canRespond = true;
 
         return true;
+    }
+
+    /**
+     * This returns whether the request is through a command or not.
+     *
+     * @return bool
+     */
+    private function isCommand()
+    {
+        return isset($this->request['message']['entities']) && $this->request['message']['entities'][0]['type'] == 'bot_command';
     }
 }

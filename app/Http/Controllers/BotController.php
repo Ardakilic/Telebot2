@@ -19,6 +19,8 @@ use App\Repositories\BotRepositoryInterface;
 use Telebot\Telebot;
 use Illuminate\Http\Request;
 use GuzzleHttp\Client as Guzzle;
+use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Exception\ClientException;
 
 class BotController extends Controller
 {
@@ -26,6 +28,7 @@ class BotController extends Controller
 
     /**
      * Create a new controller instance.
+     * @param $bot BotRepositoryInterface bot's repository interface
      */
     public function __construct(BotRepositoryInterface $bot)
     {
@@ -46,7 +49,8 @@ class BotController extends Controller
         //Find and bring the bot with responses from the data source
         $bot = $this->bot->findUsingId($id);
         if (!$bot) {
-            abort(404, 'Not Found');
+            //abort(404, 'Not Found');
+            return 'not found'; //not 404, else telegram api will spam like crazy
         }
 
         //Initialize the Telegram Bot class witg Bot's data and Telegram's request
@@ -57,8 +61,8 @@ class BotController extends Controller
             'global_env' => $_ENV,
         ]);
 
-        //There are the non-response events such as a user signs into the group etc.
-        //We should return something for the bot else it may keep pinging the server
+        //There are the non-response events such as a user signs into the group etc. IF bot listens everything.
+        //We should return something for the api, else it may keep pinging the server
         if (!$telebot->canSendMessage()) {
             return 'Sorry, the bot can\'t send message for this event';
         }
@@ -66,18 +70,28 @@ class BotController extends Controller
         //Let's take the response from Telebot Class
         $botResponse = $telebot->setResponse();
 
-        if (!$botResponse) {
+        //canSendMessage is also here because external bots can refuse to response,
+        //and it's understood only after trying to set response
+        if (!$botResponse || !$telebot->canSendMessage()) {
             return 'OK';
         }
 
         //Now let's send!
-        $client = new Guzzle();
-        $client->post(
-            'https://api.telegram.org/bot' . $bot['token'] . '/' . $telebot->getEndpoint($botResponse['type']),
-            [
-                'multipart' => $botResponse['data'],
-            ]
-        );
+        //We don't want errors showing to Telegram API, or else it'll keep pinging.
+        //e.g: a response to a deleted message etc.
+        //We'll catch them and do nothing for the time being
+        try {
+            $client = new Guzzle();
+            $client->post(
+                'https://api.telegram.org/bot' . $bot['token'] . '/' . $telebot->getEndpoint($botResponse['type']),
+                [
+                    'multipart' => $botResponse['data'],
+                ]
+            );
+        } catch (ClientException $e) {
+        } catch (RequestException $e) {
+        } catch (\Exception $e) {
+        }
 
         //Telegram wants to see a response in the end, so here goes:
         return 'OK';
