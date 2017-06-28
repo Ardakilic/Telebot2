@@ -146,12 +146,13 @@ class Telebot
         }
 
         $botParameters = $this->setParams($response);
-        $queryArray = array_merge($queryArray, $botParameters);
 
         // setParams makes a double check, because external plugins can refuse to respond
         if (!$this->canSendMessage() || !$botParameters) {
             return false;
         }
+        
+        $queryArray = array_merge($queryArray, $botParameters);
 
         return [
             'type' => (isset($response) && $response) ? $response['response_type'] : 'text',
