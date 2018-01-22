@@ -54,12 +54,16 @@ class BotController extends Controller
         }
 
         //Initialize the Telegram Bot class witg Bot's data and Telegram's request
-        $telebot = new Telebot($bot, $request->all(), [
-            'storage_path' => storage_path(),
-            'default_response' => env('DEFAULT_RESPONSE', 'Sorry, could you please repeat that?'),
-            'global_config' => config()->all(),
-            'global_env' => $_ENV,
-        ]);
+        try {
+            $telebot = new Telebot($bot, $request->all(), [
+                'storage_path' => storage_path(),
+                'default_response' => env('DEFAULT_RESPONSE', 'Sorry, could you please repeat that?'),
+                'global_config' => config()->all(),
+                'global_env' => $_ENV,
+            ]);
+        } Catch(\Exception $e) {
+            return $e->getMessage();
+        }
 
         //There are the non-response events such as a user signs into the group etc. IF bot listens everything.
         //We should return something for the api, else it may keep pinging the server

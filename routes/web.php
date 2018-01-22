@@ -11,11 +11,11 @@
 |
 */
 
-$app->post('/hook/{id}', [
+$router->post('/hook/{id}', [
     'as' => 'bot.response',
     'uses' => 'BotController@response',
 ]);
 
-$app->get('/', function () {
+$router->get('/', function () {
     return 'Ahoy, Human!';
 });
