@@ -56,4 +56,8 @@ class CreateBotCommand extends Command
         }
         $this->info('The message from Telegram API: ' . $body['description']);
     }
+    
+    public function handle() {
+        return $this->fire();
+    }
 }
