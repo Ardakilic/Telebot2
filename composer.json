@@ -11,7 +11,7 @@
   "require": {
     "php": ">=5.5.9",
     "laravel/lumen-framework": "5.8.*",
-    "vlucas/phpdotenv": "~2.2",
+    "vlucas/phpdotenv": "~3.0",
     "guzzlehttp/guzzle": "^6.3"
   },
   "require-dev": {
