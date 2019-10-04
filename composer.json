@@ -10,7 +10,7 @@
   "type": "project",
   "require": {
     "php": ">=5.5.9",
-    "laravel/lumen-framework": "5.8.*",
+    "laravel/lumen-framework": "6.1.*",
     "guzzlehttp/guzzle": "^6.3"
   },
   "require-dev": {
