@@ -11,7 +11,7 @@
   "require": {
     "php": ">=5.5.9",
     "laravel/lumen-framework": "5.8.*",
-    "guzzlehttp/guzzle": "^6.3"
+    "guzzlehttp/guzzle": "^7.0"
   },
   "require-dev": {
     "fzaninotto/faker": "~1.4",
